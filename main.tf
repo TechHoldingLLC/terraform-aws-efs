@@ -28,7 +28,7 @@ resource "aws_efs_file_system" "file_system" {
     }
   }
 
-  # Skip primary storage class transition lifecycle policy if not set, otherwise it will default to "AFTER_1_DAY" and always transition to primary storage after 1 day.
+  # Skip primary storage class transition lifecycle policy if not set. The only valid value is "AFTER_1_ACCESS", which transitions files back to primary storage after 1 access.
   dynamic "lifecycle_policy" {
     for_each = var.transition_to_primary_storage_class != null ? [1] : []
     content {
