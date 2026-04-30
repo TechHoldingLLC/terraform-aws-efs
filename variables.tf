@@ -117,9 +117,9 @@ variable "throughput_mode" {
 }
 
 variable "transition_to_archive" {
-  description = "Transition files to Archive storage. Not supported for One Zone. Valid values: `AFTER_1_DAY`, `AFTER_7_DAYS`, `AFTER_14_DAYS`, `AFTER_30_DAYS`, `AFTER_60_DAYS`, `AFTER_90_DAYS`."
+  description = "Transition files to Archive storage. Only supported when `throughput_mode` is `elastic` and `one_zone_storage` is false. Valid values: `AFTER_1_DAY`, `AFTER_7_DAYS`, `AFTER_14_DAYS`, `AFTER_30_DAYS`, `AFTER_60_DAYS`, `AFTER_90_DAYS`. Set to null to disable."
   type        = string
-  default     = "AFTER_14_DAYS"
+  default     = null
 }
 
 variable "transition_to_ia" {

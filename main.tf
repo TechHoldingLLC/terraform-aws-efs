@@ -20,9 +20,9 @@ resource "aws_efs_file_system" "file_system" {
     }
   }
 
-  # Skip archive lifecycle policy for One Zone storage — it's not supported there.
+  # Skip archive lifecycle policy for One Zone storage or non-elastic throughput mode — both are unsupported.
   dynamic "lifecycle_policy" {
-    for_each = var.one_zone_storage ? [] : [1]
+    for_each = (!var.one_zone_storage && var.throughput_mode == "elastic" && var.transition_to_archive != null) ? [1] : []
     content {
       transition_to_archive = var.transition_to_archive
     }

@@ -48,7 +48,7 @@ No modules.
 | root_directory_permissions             | POSIX permissions for the root directory                                                                     | `string`              | `"0755"`           | no       |
 | tags                                   | A map of tags to apply to all resources                                                                      | `map(string)`         | `{}`               | no       |
 | throughput_mode                        | The throughput mode for the file system. Valid values: `bursting`, `provisioned`, or `elastic`               | `string`              | `"bursting"`       | no       |
-| transition_to_archive                  | Transition files to Archive storage. Not supported for One Zone                                              | `string`              | `"AFTER_14_DAYS"`  | no       |
+| transition_to_archive                  | Transition files to Archive storage. Only supported when `throughput_mode` is `elastic` and `one_zone_storage` is false. Valid values: `AFTER_1_DAY`, `AFTER_7_DAYS`, `AFTER_14_DAYS`, `AFTER_30_DAYS`, `AFTER_60_DAYS`, `AFTER_90_DAYS`. Set to `null` to disable | `string` | `null` | no       |
 | transition_to_ia                       | Transition files to Infrequent Access storage                                                                | `string`              | `"AFTER_1_DAY"`    | no       |
 | transition_to_primary_storage_class    | Transition files back to primary storage class after access. Valid value: `AFTER_1_ACCESS`. Set to null to disable | `string`         | `"AFTER_1_ACCESS"` | no       |
 

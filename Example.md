@@ -116,8 +116,10 @@ Control when files move between Standard, Infrequent Access, Archive, and back t
 module "efs" {
   source = "path/to/terraform-aws-efs"
 
+  throughput_mode = "elastic"  # Required for transition_to_archive
+
   transition_to_ia                    = "AFTER_7_DAYS"   # Move to IA after 7 days of inactivity
-  transition_to_archive               = "AFTER_30_DAYS"  # Move to Archive after 30 days in IA
+  transition_to_archive               = "AFTER_30_DAYS"  # Move to Archive after 30 days in IA (requires elastic throughput)
   transition_to_primary_storage_class = "AFTER_1_ACCESS" # Move back to Standard on first access
 
   posix_uid = 1000
@@ -248,7 +250,7 @@ module "efs" {
   enable_backup = true
 
   transition_to_ia                    = "AFTER_7_DAYS"
-  transition_to_archive               = "AFTER_60_DAYS"
+  # transition_to_archive is not supported with provisioned throughput mode; use elastic throughput to enable it
   transition_to_primary_storage_class = "AFTER_1_ACCESS"
 
   posix_uid                  = 1000
