@@ -49,7 +49,7 @@ resource "aws_efs_file_system" "file_system" {
 ######################
 
 resource "aws_efs_mount_target" "mount_target" {
-  for_each = { for mt in var.mount_targets : mt.subnet_id => mt }
+  for_each = { for idx, mt in var.mount_targets : tostring(idx) => mt }
 
   file_system_id  = aws_efs_file_system.file_system.id
   subnet_id       = each.value.subnet_id
