@@ -65,14 +65,22 @@ variable "performance_mode" {
   default     = "generalPurpose"
 }
 
+variable "create_access_point" {
+  description = "Whether to create an EFS access point. When true, `posix_uid` and `posix_gid` are required."
+  type        = bool
+  default     = true
+}
+
 variable "posix_gid" {
-  description = "POSIX group ID for the EFS access point."
+  description = "POSIX group ID for the EFS access point. Required when `create_access_point = true`."
   type        = number
+  default     = null
 }
 
 variable "posix_uid" {
-  description = "POSIX user ID for the EFS access point."
+  description = "POSIX user ID for the EFS access point. Required when `create_access_point = true`."
   type        = number
+  default     = null
 }
 
 variable "provisioned_throughput_in_mibps" {
@@ -102,12 +110,6 @@ variable "root_directory_permissions" {
   description = "POSIX permissions for the root directory."
   type        = string
   default     = "0755"
-}
-
-variable "tags" {
-  description = "A map of tags to apply to all resources."
-  type        = map(string)
-  default     = {}
 }
 
 variable "throughput_mode" {

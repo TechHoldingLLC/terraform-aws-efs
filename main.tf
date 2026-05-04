@@ -12,6 +12,13 @@ resource "aws_efs_file_system" "file_system" {
 
   provisioned_throughput_in_mibps = var.throughput_mode == "provisioned" ? var.provisioned_throughput_in_mibps : null
 
+  lifecycle {
+    precondition {
+      condition     = !var.one_zone_storage || var.availability_zone != null # if one_zone_storage is true, then availability_zone must be set
+      error_message = "`availability_zone` must be set when `one_zone_storage = true`."
+    }
+  }
+
   # IF transaition_to_ia is not set then skip the lifecycle_policy block for it, otherwise it will default to "AFTER_1_DAY" and always transition to IA after 1 day.
   dynamic "lifecycle_policy" {
     for_each = var.transition_to_ia != null ? [1] : []
@@ -37,18 +44,6 @@ resource "aws_efs_file_system" "file_system" {
   }
 }
 
-#######################
-# EFS Backup Policy  ##
-#######################
-
-resource "aws_efs_backup_policy" "backup_policy" {
-  file_system_id = aws_efs_file_system.file_system.id
-
-  backup_policy {
-    status = var.enable_backup ? "ENABLED" : "DISABLED"
-  }
-}
-
 ######################
 # EFS Mount Target  ##
 ######################
@@ -59,18 +54,6 @@ resource "aws_efs_mount_target" "mount_target" {
   file_system_id  = aws_efs_file_system.file_system.id
   subnet_id       = each.value.subnet_id
   security_groups = each.value.security_group_ids
-}
-
-##############################
-# EFS File System Policy   ##
-##############################
-
-resource "aws_efs_file_system_policy" "file_system_policy" {
-  count = var.file_system_policy != null ? 1 : 0
-
-  file_system_id                     = aws_efs_file_system.file_system.id
-  policy                             = var.file_system_policy
-  bypass_policy_lockout_safety_check = var.bypass_policy_lockout_safety_check # For safety perpose this is set to false by default, but can be set to true to bypass the safety check that prevents locking yourself out of the file system when applying a policy that denies all actions. Use with caution.
 }
 
 #################################
@@ -96,6 +79,8 @@ resource "aws_efs_replication_configuration" "replication" {
 ######################
 
 resource "aws_efs_access_point" "access_point" {
+  count = var.create_access_point ? 1 : 0
+
   file_system_id = aws_efs_file_system.file_system.id
 
   posix_user {
@@ -109,6 +94,13 @@ resource "aws_efs_access_point" "access_point" {
       owner_uid   = var.posix_uid
       owner_gid   = var.posix_gid
       permissions = var.root_directory_permissions
+    }
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.posix_uid != null && var.posix_gid != null
+      error_message = "`posix_uid` and `posix_gid` are required when `create_access_point = true`."
     }
   }
 }

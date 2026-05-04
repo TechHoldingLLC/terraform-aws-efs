@@ -3,13 +3,13 @@
 ###############
 
 output "access_point_arn" {
-  description = "EFS access point ARN"
-  value       = aws_efs_access_point.access_point.arn
+  description = "EFS access point ARN (null if `create_access_point = false`)"
+  value       = var.create_access_point ? aws_efs_access_point.access_point[0].arn : null
 }
 
 output "access_point_id" {
-  description = "EFS access point ID"
-  value       = aws_efs_access_point.access_point.id
+  description = "EFS access point ID (null if `create_access_point = false`)"
+  value       = var.create_access_point ? aws_efs_access_point.access_point[0].id : null
 }
 
 output "arn" {
