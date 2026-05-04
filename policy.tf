@@ -15,9 +15,11 @@ resource "aws_efs_file_system_policy" "file_system_policy" {
 #######################
 
 resource "aws_efs_backup_policy" "backup_policy" {
+  count = var.enable_backup ? 1 : 0
+
   file_system_id = aws_efs_file_system.file_system.id
 
   backup_policy {
-    status = var.enable_backup ? "ENABLED" : "DISABLED"
+    status = "ENABLED"
   }
 }
